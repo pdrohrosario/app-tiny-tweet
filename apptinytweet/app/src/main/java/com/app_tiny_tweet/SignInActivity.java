@@ -1,5 +1,6 @@
 package com.app_tiny_tweet;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -9,8 +10,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.app_tiny_tweet.activities.SignUpActivity;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -32,6 +37,11 @@ public class SignInActivity extends AppCompatActivity {
 
         usernameEditText = findViewById(R.id.username_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
+
+        listenerButtonLogin();
+        redirectToSignUp();
+    }
+    private void listenerButtonLogin() {
         loginButton = findViewById(R.id.login_button);
 
         loginButton.setOnClickListener(v -> {
@@ -42,6 +52,17 @@ public class SignInActivity extends AppCompatActivity {
                 System.out.println("Ok");
             } else {
                 Toast.makeText(SignInActivity.this, "Credenciais inválidas", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void redirectToSignUp() {
+        TextView registerLink = findViewById(R.id.register_link);
+        registerLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+                startActivity(intent);
             }
         });
     }
