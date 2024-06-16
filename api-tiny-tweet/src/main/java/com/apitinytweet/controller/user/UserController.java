@@ -26,13 +26,9 @@ public class UserController
 	private final UserMapper userMapper;
 
 	@PostMapping("/save")
-	public ResponseEntity<UserRecord> saveUser(@RequestBody UserRecord userRecord){
-		try {
+	public ResponseEntity<UserRecord> saveUser(@RequestBody UserRecord userRecord) throws BadRequestException {
 			var userResponse =userMapper.toUserRecord(userService.saveUser(userRecord));
 			return ResponseEntity.ok(userResponse);
-		} catch (BadRequestException e) {
-			return ResponseEntity.badRequest().build();
-        }
 	}
 
 	@GetMapping("/list")
