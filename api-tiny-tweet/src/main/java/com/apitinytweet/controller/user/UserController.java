@@ -4,6 +4,7 @@ import com.apitinytweet.dto.user.UserRecord;
 import com.apitinytweet.mapper.user.UserMapper;
 import com.apitinytweet.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,12 @@ public class UserController
 
 	@PostMapping("/save")
 	public ResponseEntity<UserRecord> saveUser(@RequestBody UserRecord userRecord){
-		return ResponseEntity.ok(userMapper.toUserRecord(userService.saveUser(userRecord)));
+		try {
+			var userResponse =userMapper.toUserRecord(userService.saveUser(userRecord));
+			return ResponseEntity.ok(userResponse);
+		} catch (BadRequestException e) {
+			return ResponseEntity.badRequest().build();
+        }
 	}
 
 	@GetMapping("/list")

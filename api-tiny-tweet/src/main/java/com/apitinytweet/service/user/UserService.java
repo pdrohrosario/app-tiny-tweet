@@ -6,6 +6,7 @@ import com.apitinytweet.mapper.user.UserMapper;
 import com.apitinytweet.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +21,12 @@ public class UserService
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 
-	public User saveUser(UserRecord userRecord){
+	public User saveUser(UserRecord userRecord) throws BadRequestException {
+		var userByUsername = userRepository.findByUsername(userRecord.username());
+		if (userByUsername != null){
+			throw new BadRequestException("username already exists");
+		}
+
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		User user = userMapper.toUser(userRecord);
 		user.setPassword(encoder.encode(userRecord.password()));
