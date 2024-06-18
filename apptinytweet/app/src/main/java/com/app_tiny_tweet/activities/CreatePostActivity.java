@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.model.Post;
+import com.app_tiny_tweet.service.UserService;
+
+import javax.security.auth.callback.Callback;
 
 public class CreatePostActivity extends AppCompatActivity {
     private EditText etPostContent;
@@ -55,5 +58,8 @@ public class CreatePostActivity extends AppCompatActivity {
 
         Post newPost = new Post(id, content, creationDate, userId);
         Toast.makeText(this, "Post created: " + newPost.getContent(), Toast.LENGTH_SHORT).show();
+        UserService userService = new UserService();
+
+
     }
 }

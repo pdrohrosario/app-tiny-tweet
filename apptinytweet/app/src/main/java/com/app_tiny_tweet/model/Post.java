@@ -3,13 +3,13 @@ package com.app_tiny_tweet.model;
 public class Post {
     private String id;
     private String content;
-    private String creationDate;
+    private String title;
     private String userId;
 
-    public Post(String id, String content, String creationDate, String userId) {
+    public Post(String id, String content, String title, String userId) {
         this.id = id;
+        this.title = title;
         this.content = content;
-        this.creationDate = creationDate;
         this.userId = userId;
     }
 
@@ -29,12 +29,12 @@ public class Post {
         this.content = content;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public String getTitle() {
+        return title;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUserId() {

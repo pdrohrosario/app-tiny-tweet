@@ -6,6 +6,12 @@
     android:padding="16dp">
 
     <EditText
+        android:id="@+id/etPostTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Título do Post" />
+
+    <EditText
         android:id="@+id/etPostContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,4 +22,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Adicionar Post" />
+
 </LinearLayout>

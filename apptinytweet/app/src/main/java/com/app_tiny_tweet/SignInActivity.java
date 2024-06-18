@@ -22,7 +22,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.app_tiny_tweet.activities.HomeActivity;
 import com.app_tiny_tweet.activities.SignUpActivity;
+import com.app_tiny_tweet.model.User;
+import com.app_tiny_tweet.service.UserService;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -39,7 +42,7 @@ public class SignInActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_edit_text);
 
         listenerButtonLogin();
-        redirectToSignUp();
+        listenerSignUp();
     }
     private void listenerButtonLogin() {
         loginButton = findViewById(R.id.login_button);
@@ -48,27 +51,44 @@ public class SignInActivity extends AppCompatActivity {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
 
-            if (authentication(username, password)) {
-                System.out.println("Ok");
+            validateFields(username, password);
+
+            UserService userService = new UserService();
+
+            if (userService.login(new User(username, password))) {
+                redirectToHome();
             } else {
                 Toast.makeText(SignInActivity.this, "Credenciais inválidas", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void redirectToSignUp() {
+    private void listenerSignUp() {
         TextView registerLink = findViewById(R.id.register_link);
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
-                startActivity(intent);
+                redirectToSignUp();
             }
         });
     }
 
-    private boolean authentication(String username, String password) {
+    private boolean validateFields(String username, String password) {
+        if(username.isEmpty() || password.isEmpty()){
+            Toast.makeText(SignInActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
-        return false;
+        return true;
+    }
+
+    private void redirectToSignUp(){
+        Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+        startActivity(intent);
+    }
+
+    private void redirectToHome(){
+        Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+        startActivity(intent);
     }
 }
