@@ -1,7 +1,7 @@
 # App Tiny Tweet
 
 ## Descrição
- - Uma plataforma onde usuários pode criar uma conta e publicar e ver seus.
+ - Uma plataforma onde usuários pode criar uma conta e publicar e ver textos.
 
 ## Funcionalidades
  - Criar conta
