@@ -83,4 +83,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             contentTextView.setText(post.getContent());
         }
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public List<Post> getPostList() {
+        return postList;
+    }
+
+    public void setPostList(List<Post> postList) {
+        this.postList = postList;
+    }
 }

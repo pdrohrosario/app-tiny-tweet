@@ -53,7 +53,12 @@ public class UserService {
                     throw new IOException("Unexpected code " + response);
                 }
 
-                user.setToken(response.body().string());
+                Gson gson = new Gson();
+                Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
+                user.setToken(map.get("token").toString());
+                user.getUser().setUsername(map.get("username").toString());
+                Double value = (Double) map.get("id");
+                user.getUser().setId(value.longValue());
                 response.close();
 
                 result[0] = true;

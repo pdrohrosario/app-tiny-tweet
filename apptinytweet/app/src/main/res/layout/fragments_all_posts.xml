@@ -5,16 +5,8 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!-- Toolbar (if needed) -->
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:title="All Posts"
-            android:elevation="4dp" />
+        android:orientation="vertical"
+        android:id="@+id/mainLayout">
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -24,8 +16,6 @@
             android:clipToPadding="false"
             android:padding="8dp"
             android:scrollbars="vertical" />
-
-        <!-- Progress bar or placeholder views can be added here if needed -->
 
     </LinearLayout>
 </ScrollView>

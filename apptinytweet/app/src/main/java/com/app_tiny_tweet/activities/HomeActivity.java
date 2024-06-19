@@ -8,10 +8,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.adapter.PostPagerAdapter;
+import com.app_tiny_tweet.fragments.AllPostsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -48,6 +50,22 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
+        });
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                Fragment fragment = (Fragment) adapter.instantiateItem(viewPager, position);
+                if (fragment instanceof AllPostsFragment) {
+                    ((AllPostsFragment) fragment).getAllPosts();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
         });
 
         createPost = findViewById(R.id.fabCreatePost);
