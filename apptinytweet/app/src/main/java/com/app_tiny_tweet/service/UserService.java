@@ -1,7 +1,10 @@
 package com.app_tiny_tweet.service;
 
+import com.app_tiny_tweet.model.Post;
 import com.app_tiny_tweet.model.User;
+import com.app_tiny_tweet.security.UserManager;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import okhttp3.OkHttpClient;
 
@@ -9,26 +12,34 @@ import okhttp3.OkHttpClient;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 public class UserService {
 
-    private OkHttpClient client;
 
-    public UserService() {
-        client = new OkHttpClient();
+    private static UserService instance;
+
+    private UserService() {
     }
 
-    public boolean login(User user) {
+    public static synchronized UserService getInstance() {
+        if (instance == null) {
+            instance = new UserService();
+        }
+        return instance;
+    }
+
+    public boolean login(UserManager user) {
         final boolean[] result = {false};
 
         Thread saveThread = new Thread(() -> {
             try {
-                client = new OkHttpClient();
                 OkHttpClient client = new OkHttpClient();
                 String json = "{"
-                        + "\"username\":\"" + user.getUsername() + "\","
-                        + "\"password\":\"" + user.getPassword() + "\""
+                        + "\"username\":\"" + user.getUser().getUsername() + "\","
+                        + "\"password\":\"" + user.getUser().getPassword() + "\""
                         + "}";
 
                 RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
@@ -38,31 +49,23 @@ public class UserService {
                         .build();
 
                 Response response = client.newCall(request).execute();
-
-                // Verificando se a resposta foi bem-sucedida
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
 
-                // Processando a resposta
-                Gson gson = new Gson();
-                String token = (response.body().string());
-
-                // Fechando o corpo da resposta
+                user.setToken(response.body().string());
                 response.close();
 
-                result[0] = true;  // Definindo o resultado como verdadeiro em caso de sucesso
+                result[0] = true;
             } catch (IOException e) {
                 e.printStackTrace();
-                result[0] = false; // Definindo o resultado como falso em caso de exceção
+                result[0] = false;
             }
         });
 
-        // Iniciando a thread
         saveThread.start();
 
         try {
-            // Esperando a thread terminar
             saveThread.join();
         } catch (InterruptedException e) {
             System.out.println("A thread foi interrompida.");

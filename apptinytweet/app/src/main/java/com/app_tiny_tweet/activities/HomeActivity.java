@@ -2,6 +2,11 @@ package com.app_tiny_tweet.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -12,7 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private FloatingActionButton fabCreatePost;
+    private FloatingActionButton createPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +50,8 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        fabCreatePost = findViewById(R.id.fabCreatePost);
-        fabCreatePost.setOnClickListener(v -> {
+        createPost = findViewById(R.id.fabCreatePost);
+        createPost.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, CreatePostActivity.class);
             startActivity(intent);
         });

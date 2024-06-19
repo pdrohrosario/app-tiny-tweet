@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.app_tiny_tweet.activities.HomeActivity;
 import com.app_tiny_tweet.activities.SignUpActivity;
 import com.app_tiny_tweet.model.User;
+import com.app_tiny_tweet.security.UserManager;
 import com.app_tiny_tweet.service.UserService;
 
 public class SignInActivity extends AppCompatActivity {
@@ -53,9 +54,9 @@ public class SignInActivity extends AppCompatActivity {
 
             validateFields(username, password);
 
-            UserService userService = new UserService();
-
-            if (userService.login(new User(username, password))) {
+            UserManager userManager = UserManager.getInstance();
+            userManager.setUser(new User(username, password));
+            if (UserService.getInstance().login(userManager)) {
                 redirectToHome();
             } else {
                 Toast.makeText(SignInActivity.this, "Credenciais inválidas", Toast.LENGTH_SHORT).show();

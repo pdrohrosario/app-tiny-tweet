@@ -56,10 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
             String confirmPassword = confirmPasswordEditText.getText().toString();
 
             if(validateFields(username, password, confirmPassword)) {
-
-                UserService userService = new UserService();
-
-                userService.save(new User(username, password));
+                UserService.getInstance().save(new User(username, password));
                 redirectToSignIn();
 
             }

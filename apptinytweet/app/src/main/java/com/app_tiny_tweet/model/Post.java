@@ -1,23 +1,29 @@
 package com.app_tiny_tweet.model;
 
 public class Post {
-    private String id;
+    private Long id;
     private String content;
     private String title;
-    private String userId;
+    private Long userId;
 
-    public Post(String id, String content, String title, String userId) {
+    public Post(Long id, String content, String title, Long userId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.userId = userId;
     }
 
-    public String getId() {
+    public Post(String content, String title, Long userId) {
+        this.title = title;
+        this.content = content;
+        this.userId = userId;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -37,11 +43,11 @@ public class Post {
         this.title = title;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }
