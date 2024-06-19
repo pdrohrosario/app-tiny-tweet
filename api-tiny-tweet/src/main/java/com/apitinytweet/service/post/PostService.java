@@ -29,6 +29,10 @@ public class PostService
 		return postRepository.findById(id).orElse(null);
 	}
 
+	public Page<Post> listAllPostsByUserId(Long userId, Pageable pageable){
+		return postRepository.findAllByUserId(userId, pageable);
+	}
+
 	public Page<Post> listAllPosts(Pageable pageable){
 		return postRepository.findAll(pageable);
 	}

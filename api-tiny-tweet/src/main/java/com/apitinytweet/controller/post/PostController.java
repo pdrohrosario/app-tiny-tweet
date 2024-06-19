@@ -36,6 +36,13 @@ public class PostController
 		return ResponseEntity.ok(postRecords);
 	}
 
+	@GetMapping("/list/{userId}")
+	public ResponseEntity<Page<PostRecord>> listAllPostsByUserId(@PathVariable Long userId, Pageable pageable){
+		Page<PostRecord> postRecords = postService.listAllPostsByUserId(userId, pageable).map(postMapper::toPostRecord);
+
+		return ResponseEntity.ok(postRecords);
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<PostRecord> findPostById(@PathVariable Long id){
 		return ResponseEntity.ok(postMapper.toPostRecord(postService.findPostById(id)));
