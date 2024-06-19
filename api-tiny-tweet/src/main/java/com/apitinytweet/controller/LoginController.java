@@ -1,5 +1,6 @@
 package com.apitinytweet.controller;
 
+import com.apitinytweet.dto.LoginReturnRecord;
 import com.apitinytweet.dto.user.LoginRecord;
 import com.apitinytweet.entity.user.User;
 import com.apitinytweet.service.TokenService;
@@ -21,12 +22,13 @@ public class LoginController
 	private final TokenService tokenService;
 
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginRecord loginRecord) {
+	public ResponseEntity<LoginReturnRecord> login(@RequestBody LoginRecord loginRecord) {
 		var usernamePassword = new UsernamePasswordAuthenticationToken(loginRecord.username(), loginRecord.password());
 		var authentication = authenticationManager.authenticate(usernamePassword);
+		User user = (User) authentication.getPrincipal();
 
-		var token = tokenService.generateToken((User) authentication.getPrincipal());
+		var token = tokenService.generateToken(user);
 
-		return ResponseEntity.ok(token);
+		return ResponseEntity.ok(new LoginReturnRecord(user.getUsername(), user.getId(), token));
 	}
 }
