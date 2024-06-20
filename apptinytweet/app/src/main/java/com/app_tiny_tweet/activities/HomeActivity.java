@@ -2,10 +2,6 @@ package com.app_tiny_tweet.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -14,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.adapter.PostPagerAdapter;
 import com.app_tiny_tweet.fragments.AllPostsFragment;
+import com.app_tiny_tweet.fragments.MyPostsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -29,9 +26,9 @@ public class HomeActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Todos os posts"));
-        tabLayout.addTab(tabLayout.newTab().setText("Meus posts"));
-        tabLayout.addTab(tabLayout.newTab().setText("Perfil"));
+        tabLayout.addTab(tabLayout.newTab().setText("All Posts"));
+        tabLayout.addTab(tabLayout.newTab().setText("My posts"));
+        tabLayout.addTab(tabLayout.newTab().setText("Profile"));
 
         final PostPagerAdapter adapter = new PostPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
@@ -60,7 +57,10 @@ public class HomeActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 Fragment fragment = (Fragment) adapter.instantiateItem(viewPager, position);
                 if (fragment instanceof AllPostsFragment) {
-                    ((AllPostsFragment) fragment).getAllPosts();
+                    ((AllPostsFragment) fragment).loadPostsFromAPI();
+                }
+                else if (fragment instanceof MyPostsFragment) {
+                    ((MyPostsFragment) fragment).loadPostsByUserIdFromAPI();
                 }
             }
 

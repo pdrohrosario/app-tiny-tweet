@@ -66,12 +66,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean validateFields(String username, String password, String confirmPassword) {
         if(username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
-            Toast.makeText(SignUpActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, "Fill out the fields!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if(!password.equals(confirmPassword)){
-            Toast.makeText(SignUpActivity.this, "As senhas não conferem!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, "The passwords don't match!", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

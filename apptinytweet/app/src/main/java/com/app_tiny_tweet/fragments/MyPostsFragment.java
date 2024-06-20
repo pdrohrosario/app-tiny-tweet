@@ -16,12 +16,14 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.model.Post;
 import com.app_tiny_tweet.security.UserManager;
+import com.app_tiny_tweet.service.PostService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,6 +46,8 @@ public class MyPostsFragment extends Fragment {
     private PostAdapter postAdapter;
     private List<Post> postList;
 
+    private int currentPage = 0;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,62 +62,15 @@ public class MyPostsFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
-        getUserPosts();
+        loadPostsByUserIdFromAPI();
 
         return view;
     }
 
-    public void getUserPosts() {
-        OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.68.110:8080/post/user/"+UserManager.getInstance().getUser().getId();
-        String token = UserManager.getInstance().getToken();
-
-        Request request = buildRequest(url, token);
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                handleRequestFailure(e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                handleResponse(response);
-            }
-        });
-    }
-
-    private Request buildRequest(String url, String token) {
-        return new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("Authorization", "Bearer " + token)
-                .build();
-    }
-
-    private void handleRequestFailure(IOException e) {
-        e.printStackTrace();
-    }
-
-    private void handleResponse(Response response) throws IOException {
-        if (response.isSuccessful()) {
-            processSuccessfulResponse(response);
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
-    }
-
-    private void processSuccessfulResponse(Response response) throws IOException {
-        Gson gson = new Gson();
-        Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
-        String contentJson = gson.toJson(map.get("content"));
-
-        Type listType = new TypeToken<List<Post>>() {}.getType();
-        List<Post> postList = gson.fromJson(contentJson, listType);
-
+    public void loadPostsByUserIdFromAPI() {
+        List<Post> postList = PostService.getInstance().getAllPostsByUserId(currentPage);
         updatePostsView(postList);
     }
-
     private void updatePostsView(List<Post> postList) {
         getActivity().runOnUiThread(() -> {
             linearLayout.removeAllViews();
@@ -122,6 +79,8 @@ public class MyPostsFragment extends Fragment {
                 TextView textView = createTextForPost(post);
                 linearLayout.addView(textView);
             }
+
+            createButton();
 
             postAdapter.setPostList(postList);
             postAdapter.notifyDataSetChanged();
@@ -153,5 +112,35 @@ public class MyPostsFragment extends Fragment {
         textView.setBackgroundResource(R.drawable.rounded_background);
 
         return textView;
+    }
+
+    public void createButton(){
+        Button prevButton = new Button(getContext());
+        prevButton.setText("Prev");
+        prevButton.setEnabled(currentPage > 0);
+        linearLayout.addView(prevButton);
+
+        // Create Next Button
+        Button nextButton = new Button(getContext());
+        nextButton.setText("Next");
+        linearLayout.addView(nextButton);
+
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPage > 0) {
+                    currentPage--;
+                    loadPostsByUserIdFromAPI();
+                }
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentPage++;
+                loadPostsByUserIdFromAPI();
+            }
+        });
     }
 }

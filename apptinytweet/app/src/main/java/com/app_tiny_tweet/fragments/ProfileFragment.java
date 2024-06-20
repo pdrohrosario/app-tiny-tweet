@@ -21,6 +21,7 @@ import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.SignInActivity;
 import com.app_tiny_tweet.model.Post;
 import com.app_tiny_tweet.security.UserManager;
+import com.app_tiny_tweet.service.UserService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -52,20 +53,23 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragments_profile, container, false);
 
         usernameEditText = view.findViewById(R.id.username_edit_text);
+        usernameEditText.setText(UserManager.getInstance().getUser().getUsername());
+
         passwordEditText = view.findViewById(R.id.password_edit_text);
         updateButton = view.findViewById(R.id.update_button);
 
         updateButton.setOnClickListener(v -> {
-            // Here you would typically update the user details in your database or authentication provider
             String updatedUsername = usernameEditText.getText().toString().trim();
             String updatedPassword = passwordEditText.getText().toString().trim();
 
             if (updatedUsername.isEmpty() || updatedPassword.isEmpty()) {
-                Toast.makeText(getActivity(), "Username and Password cannot be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Username and Password must be filled in", Toast.LENGTH_SHORT).show();
             } else {
-                UserManager.getInstance().getUser().setUsername(updatedUsername);
-                UserManager.getInstance().getUser().setPassword(updatedPassword);
-               updateUser(UserManager.getInstance());
+               UserManager.getInstance().getUser().setUsername(updatedUsername);
+               UserManager.getInstance().getUser().setPassword(updatedPassword);
+               UserService.getInstance().save(UserManager.getInstance().getUser());
+               Toast.makeText(getActivity(), "Updated credentials", Toast.LENGTH_SHORT).show();
+
             }
         });
 

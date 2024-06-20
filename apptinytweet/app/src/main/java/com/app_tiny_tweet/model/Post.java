@@ -5,18 +5,27 @@ public class Post {
     private String content;
     private String title;
     private Long userId;
+    private String username;
 
-    public Post(Long id, String content, String title, Long userId) {
+    public Post(Long id, String content, String title, Long userId, String username) {
         this.id = id;
-        this.title = title;
         this.content = content;
+        this.title = title;
         this.userId = userId;
+        this.username = username;
     }
 
     public Post(String content, String title, Long userId) {
-        this.title = title;
         this.content = content;
+        this.title = title;
         this.userId = userId;
+    }
+
+    public Post(String content, String title, Long userId, String username) {
+        this.content = content;
+        this.title = title;
+        this.userId = userId;
+        this.username = username;
     }
 
     public Long getId() {
@@ -49,5 +58,13 @@ public class Post {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

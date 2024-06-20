@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -55,9 +55,6 @@ public class PostService {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
-                Gson gson = new Gson();
-                Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
-                System.out.println(map);
                 response.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -74,38 +71,101 @@ public class PostService {
         }
     }
 
-    public List<Post> getAllPosts() {
+    public List<Post> getAllPosts(int currentPage) {
         List<Post> postList = new ArrayList<>();
-
         OkHttpClient client = new OkHttpClient();
+        String url = "http://192.168.68.110:8080/post/list?page=" + currentPage;
+        String token = UserManager.getInstance().getToken();
 
         Request request = new Request.Builder()
-                .url("http://192.168.68.110:8080/post/list")
+                .url(url)
                 .get()
-                .addHeader("Authorization", "Bearer " + UserManager.getInstance().getToken())
+                .addHeader("Authorization", "Bearer " + token)
                 .build();
+
+        CountDownLatch latch = new CountDownLatch(1);
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+                handleRequestFailure(e);
+                latch.countDown();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    Gson gson = new Gson();
-                    Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
-                    String contentJson = gson.toJson(map.get("content"));
-
-                    Type listType = new TypeToken<List<Post>>() {}.getType();
-                    List<Post> posts = gson.fromJson(contentJson, listType); // Clear old data
-
+                    postList.addAll(processSuccessfulResponse(response));
                 } else {
-                    throw new IOException("Unexpected code " + response);
+                    handleResponseFailure(response);
                 }
+                latch.countDown();
             }
         });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return postList;
+    }
+
+    private void handleResponseFailure(Response response) throws IOException {
+        throw new IOException("Unexpected code " + response);
+    }
+
+    private void handleRequestFailure(IOException e) {
+        e.printStackTrace();
+    }
+
+    private List<Post> processSuccessfulResponse(Response response) throws IOException {
+        Gson gson = new Gson();
+        Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
+        String contentJson = gson.toJson(map.get("content"));
+
+        Type listType = new TypeToken<List<Post>>() {}.getType();
+        return gson.fromJson(contentJson, listType);
+    }
+
+    public List<Post> getAllPostsByUserId(int currentPage) {
+        List<Post> postList = new ArrayList<>();
+        OkHttpClient client = new OkHttpClient();
+        String url = "http://192.168.68.110:8080/post/list/"+UserManager.getInstance().getUser().getId()+"?page="+currentPage;
+        String token = UserManager.getInstance().getToken();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                handleRequestFailure(e);
+                latch.countDown();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    postList.addAll(processSuccessfulResponse(response));
+                } else {
+                    handleResponseFailure(response);
+                }
+                latch.countDown();
+            }
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return postList;
     }

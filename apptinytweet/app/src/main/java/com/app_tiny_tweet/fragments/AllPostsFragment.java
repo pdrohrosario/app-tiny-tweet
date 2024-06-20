@@ -7,11 +7,10 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,22 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.model.Post;
-import com.app_tiny_tweet.security.UserManager;
 import com.app_tiny_tweet.service.PostService;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class AllPostsFragment extends Fragment {
 
@@ -46,7 +33,7 @@ public class AllPostsFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postList;
-
+    private int currentPage = 0;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,59 +47,13 @@ public class AllPostsFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
-        getAllPosts();
+        loadPostsFromAPI();
 
         return view;
     }
 
-    public void getAllPosts() {
-        OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.68.110:8080/post/list";
-        String token = UserManager.getInstance().getToken();
-
-        Request request = buildRequest(url, token);
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                handleRequestFailure(e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                handleResponse(response);
-            }
-        });
-    }
-
-    private Request buildRequest(String url, String token) {
-        return new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("Authorization", "Bearer " + token)
-                .build();
-    }
-
-    private void handleRequestFailure(IOException e) {
-        e.printStackTrace();
-    }
-
-    private void handleResponse(Response response) throws IOException {
-        if (response.isSuccessful()) {
-            processSuccessfulResponse(response);
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
-    }
-
-    private void processSuccessfulResponse(Response response) throws IOException {
-        Gson gson = new Gson();
-        Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
-        String contentJson = gson.toJson(map.get("content"));
-
-        Type listType = new TypeToken<List<Post>>() {}.getType();
-        List<Post> postList = gson.fromJson(contentJson, listType);
-
+    public void loadPostsFromAPI() {
+        List<Post> postList = PostService.getInstance().getAllPosts(currentPage);
         updatePostsView(postList);
     }
 
@@ -124,6 +65,8 @@ public class AllPostsFragment extends Fragment {
                 TextView textView = createTextForPost(post);
                 linearLayout.addView(textView);
             }
+
+            createButton();
 
             postAdapter.setPostList(postList);
             postAdapter.notifyDataSetChanged();
@@ -140,7 +83,7 @@ public class AllPostsFragment extends Fragment {
 
         textView.setLayoutParams(params);
         SpannableStringBuilder spannable = new SpannableStringBuilder();
-        spannable.append("\n");
+        spannable.append("\n@"+post.getUsername() +"\n");
         int start = spannable.length();
         spannable.append(post.getTitle() + ":");
         int end = spannable.length();
@@ -155,5 +98,35 @@ public class AllPostsFragment extends Fragment {
         textView.setBackgroundResource(R.drawable.rounded_background);
 
         return textView;
+    }
+
+    public void createButton(){
+        Button prevButton = new Button(getContext());
+        prevButton.setText("Prev");
+        prevButton.setEnabled(currentPage > 0);
+        linearLayout.addView(prevButton);
+
+        // Create Next Button
+        Button nextButton = new Button(getContext());
+        nextButton.setText("Next");
+        linearLayout.addView(nextButton);
+
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPage > 0) {
+                    currentPage--;
+                    loadPostsFromAPI();
+                }
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentPage++;
+                loadPostsFromAPI();
+            }
+        });
     }
 }

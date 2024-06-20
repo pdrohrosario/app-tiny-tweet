@@ -40,7 +40,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 String postTitle = titleEditText.getText().toString().trim();
 
                 if (TextUtils.isEmpty(postContent) || TextUtils.isEmpty(postTitle)) {
-                    Toast.makeText(CreatePostActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePostActivity.this, "Fill out the fields", Toast.LENGTH_SHORT).show();
                 } else {
                     UserManager user = UserManager.getInstance();
                     PostService.getInstance().createPost(new Post(postTitle, postContent, user.getUser().getId()), UserManager.getInstance());

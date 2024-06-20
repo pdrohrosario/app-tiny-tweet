@@ -37,10 +37,7 @@ public class UserService {
         Thread saveThread = new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
-                String json = "{"
-                        + "\"username\":\"" + user.getUser().getUsername() + "\","
-                        + "\"password\":\"" + user.getUser().getPassword() + "\""
-                        + "}";
+                String json = buildJson(user.getUser());
 
                 RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
                 Request request = new Request.Builder()
@@ -86,10 +83,8 @@ public class UserService {
         Thread t = new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
-                String json = "{"
-                        + "\"username\":\"" + user.getUsername() + "\","
-                        + "\"password\":\"" + user.getPassword() + "\""
-                        + "}";
+
+                String json = buildJson(user);
 
                 RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
                 Request request = new Request.Builder()
@@ -101,9 +96,6 @@ public class UserService {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
-                Gson gson = new Gson();
-                Map<String, Object> map = gson.fromJson(response.body().string(), Map.class);
-                System.out.println(map);
                 response.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -117,6 +109,22 @@ public class UserService {
         } catch (InterruptedException e) {
             System.out.println("A thread foi interrompida.");
             Thread.currentThread().interrupt();
+        }
+    }
+
+    public String buildJson(User user) {
+        if (user.getId() != null) {
+            return "{"
+                    + "\"id\":\"" + user.getId() + "\","
+                    + "\"username\":\"" + user.getUsername() + "\","
+                    + "\"password\":\"" + user.getPassword() + "\""
+                    + "}";
+        }
+        else{
+            return "{"
+                    + "\"username\":\"" + user.getUsername() + "\","
+                    + "\"password\":\"" + user.getPassword() + "\""
+                    + "}";
         }
     }
 }
