@@ -37,6 +37,11 @@ public class PostService
 		return postRepository.findAll(pageable);
 	}
 
+	public Page<Post> listAllPostsAndUsers(Pageable pageable) {
+		return postRepository.findAllPostsAndUsers(pageable);
+	}
+
+
 	public void deletePost(Long id){
 		postRepository.deleteById(id);
 	}

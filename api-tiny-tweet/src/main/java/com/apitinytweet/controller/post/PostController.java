@@ -1,7 +1,9 @@
 package com.apitinytweet.controller.post;
 
 import com.apitinytweet.dto.post.PostRecord;
+import com.apitinytweet.dto.post.PostRecordResponse;
 import com.apitinytweet.mapper.post.PostMapper;
+import com.apitinytweet.mapper.post.PostResponseMapper;
 import com.apitinytweet.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ public class PostController
 
 	private final PostService postService;
 	private final PostMapper postMapper;
+	private final PostResponseMapper postResponseMapper;
 
 	@PostMapping("/save")
 	public ResponseEntity<PostRecord> savePost(@RequestBody PostRecord postRecord){
@@ -30,8 +33,8 @@ public class PostController
 	}
 
 	@GetMapping("/list")
-	public ResponseEntity<Page<PostRecord>> listAllPosts(Pageable pageable){
-		Page<PostRecord> postRecords = postService.listAllPosts(pageable).map(postMapper::toPostRecord);
+	public ResponseEntity<Page<PostRecordResponse>> listAllPosts(Pageable pageable){
+		Page<PostRecordResponse> postRecords = postService.listAllPostsAndUsers(pageable).map(postResponseMapper::toPostRecordResponse);
 
 		return ResponseEntity.ok(postRecords);
 	}
