@@ -12,13 +12,13 @@ public interface PostResponseMapper
 
 	@Mappings({
 			@Mapping(target = "userId", source = "user.id"),
-			@Mapping(target = "userName", source = "user.username")
+			@Mapping(target = "username", source = "user.username")
 	})
 	PostRecordResponse toPostRecordResponse(Post post);
 
 	@Mappings({
 			@Mapping(source = "userId", target = "user.id"),
-			@Mapping(source = "userName", target = "user.username")
+			@Mapping(source = "username", target = "user.username")
 	})
 	Post toPost(PostRecordResponse postRecord);
 }
