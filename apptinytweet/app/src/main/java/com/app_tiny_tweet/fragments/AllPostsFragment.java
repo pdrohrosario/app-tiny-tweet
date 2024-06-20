@@ -61,12 +61,12 @@ public class AllPostsFragment extends Fragment {
         getActivity().runOnUiThread(() -> {
             linearLayout.removeAllViews();
 
+            createButton();
+
             for (Post post : postList) {
                 TextView textView = createTextForPost(post);
                 linearLayout.addView(textView);
             }
-
-            createButton();
 
             postAdapter.setPostList(postList);
             postAdapter.notifyDataSetChanged();
@@ -106,7 +106,6 @@ public class AllPostsFragment extends Fragment {
         prevButton.setEnabled(currentPage > 0);
         linearLayout.addView(prevButton);
 
-        // Create Next Button
         Button nextButton = new Button(getContext());
         nextButton.setText("Next");
         linearLayout.addView(nextButton);

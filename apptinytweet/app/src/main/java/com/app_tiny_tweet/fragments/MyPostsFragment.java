@@ -75,12 +75,12 @@ public class MyPostsFragment extends Fragment {
         getActivity().runOnUiThread(() -> {
             linearLayout.removeAllViews();
 
+            createButton();
+
             for (Post post : postList) {
                 TextView textView = createTextForPost(post);
                 linearLayout.addView(textView);
             }
-
-            createButton();
 
             postAdapter.setPostList(postList);
             postAdapter.notifyDataSetChanged();
