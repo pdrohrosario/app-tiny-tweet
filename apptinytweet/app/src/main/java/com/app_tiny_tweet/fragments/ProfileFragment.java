@@ -65,17 +65,19 @@ public class ProfileFragment extends Fragment {
             String updatedUsername = usernameEditText.getText().toString().trim();
             String updatedPassword = passwordEditText.getText().toString().trim();
 
-            if (updatedUsername.isEmpty() || updatedPassword.isEmpty()) {
-                Toast.makeText(getActivity(), "Username and Password must not be empty", Toast.LENGTH_SHORT).show();
+            if (updatedPassword.isEmpty()) {
+                Toast.makeText(getActivity(), "Password must not be empty", Toast.LENGTH_SHORT).show();
             } else {
-               UserManager.getInstance().getUser().setUsername(updatedUsername);
-               UserManager.getInstance().getUser().setPassword(updatedPassword);
-               try {
-                   UserService.getInstance().save(UserManager.getInstance().getUser());
-                   Toast.makeText(getActivity(), "Updated credentials", Toast.LENGTH_SHORT).show();
-               }catch (Exception e) {
-                   Toast.makeText(getActivity(), "Username already exists", Toast.LENGTH_SHORT).show();
-               }
+                UserManager.getInstance().getUser().setUsername(updatedUsername);
+                UserManager.getInstance().getUser().setPassword(updatedPassword);
+                passwordEditText.setText("");
+                passwordEditText.clearFocus();
+                try {
+                    UserService.getInstance().save(UserManager.getInstance().getUser());
+                    Toast.makeText(getActivity(), "Updated credentials", Toast.LENGTH_SHORT).show();
+                }catch (Exception e) {
+                    Toast.makeText(getActivity(), "Username already exists", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
