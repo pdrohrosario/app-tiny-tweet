@@ -1,5 +1,6 @@
 package com.app_tiny_tweet.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.app_tiny_tweet.R;
 import com.app_tiny_tweet.SignInActivity;
+import com.app_tiny_tweet.activities.SignUpActivity;
 import com.app_tiny_tweet.model.Post;
 import com.app_tiny_tweet.security.UserManager;
 import com.app_tiny_tweet.service.UserService;
@@ -46,7 +48,7 @@ public class ProfileFragment extends Fragment {
     private TextInputEditText usernameEditText;
     private TextInputEditText passwordEditText;
     private MaterialButton updateButton;
-
+    private MaterialButton logoutButton;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,72 +56,38 @@ public class ProfileFragment extends Fragment {
 
         usernameEditText = view.findViewById(R.id.username_edit_text);
         usernameEditText.setText(UserManager.getInstance().getUser().getUsername());
-
         passwordEditText = view.findViewById(R.id.password_edit_text);
+
         updateButton = view.findViewById(R.id.update_button);
+        logoutButton = view.findViewById(R.id.logout_button);
 
         updateButton.setOnClickListener(v -> {
             String updatedUsername = usernameEditText.getText().toString().trim();
             String updatedPassword = passwordEditText.getText().toString().trim();
 
             if (updatedUsername.isEmpty() || updatedPassword.isEmpty()) {
-                Toast.makeText(getActivity(), "Username and Password must be filled in", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Username and Password must not be empty", Toast.LENGTH_SHORT).show();
+            } else if (UserManager.getInstance().getUser().getUsername().equals(updatedUsername)) {
+                Toast.makeText(getActivity(), "The new username must be different from the current", Toast.LENGTH_SHORT).show();
             } else {
                UserManager.getInstance().getUser().setUsername(updatedUsername);
                UserManager.getInstance().getUser().setPassword(updatedPassword);
-               UserService.getInstance().save(UserManager.getInstance().getUser());
-               Toast.makeText(getActivity(), "Updated credentials", Toast.LENGTH_SHORT).show();
-
+               try {
+                   UserService.getInstance().save(UserManager.getInstance().getUser());
+                   Toast.makeText(getActivity(), "Updated credentials", Toast.LENGTH_SHORT).show();
+               }catch (Exception e) {
+                   Toast.makeText(getActivity(), "Username already exists", Toast.LENGTH_SHORT).show();
+               }
             }
+        });
+
+        logoutButton.setOnClickListener(v -> {
+            UserManager.getInstance().logout();
+            Intent intent = new Intent(getActivity(), SignInActivity.class);
+            startActivity(intent);
         });
 
         return view;
-    }
-
-    public void updateUser(UserManager user) {
-        OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.68.110:8080/user/save";
-        String token = UserManager.getInstance().getToken();
-
-        Request request = buildRequest(url, token, user);
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                handleRequestFailure(e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                handleResponse(response);
-            }
-        });
-    }
-
-    private Request buildRequest(String url, String token, UserManager user) {
-        String json = "{"
-                + "\"id\":\"" + user.getUser().getId() + "\","
-                + "\"username\":\"" + user.getUser().getUsername() + "\","
-                + "\"password\":\"" + user.getUser().getPassword() + "\""
-                + "}";
-        RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
-        return new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("Authorization", "Bearer " + token)
-                .build();
-    }
-
-    private void handleRequestFailure(IOException e) {
-        e.printStackTrace();
-    }
-
-    private void handleResponse(Response response) throws IOException {
-        if (response.isSuccessful()) {
-            Toast.makeText(getContext(), "Credenciais Atualizadas", Toast.LENGTH_SHORT).show();
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
     }
 
 }

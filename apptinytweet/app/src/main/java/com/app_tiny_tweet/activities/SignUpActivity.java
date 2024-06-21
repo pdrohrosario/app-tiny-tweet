@@ -1,5 +1,7 @@
 package com.app_tiny_tweet.activities;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -56,9 +58,12 @@ public class SignUpActivity extends AppCompatActivity {
             String confirmPassword = confirmPasswordEditText.getText().toString();
 
             if(validateFields(username, password, confirmPassword)) {
-                UserService.getInstance().save(new User(username, password));
-                redirectToSignIn();
-
+                try {
+                    UserService.getInstance().save(new User(username, password));
+                    redirectToSignIn();
+                } catch (Exception e) {
+                    Toast.makeText(SignUpActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

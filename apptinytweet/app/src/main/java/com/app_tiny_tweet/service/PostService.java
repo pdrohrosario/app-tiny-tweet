@@ -1,6 +1,7 @@
 package com.app_tiny_tweet.service;
 
 import com.app_tiny_tweet.model.Post;
+import com.app_tiny_tweet.security.GlobalVariables;
 import com.app_tiny_tweet.security.UserManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -74,7 +75,7 @@ public class PostService {
     public List<Post> getAllPosts(int currentPage) {
         List<Post> postList = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.68.110:8080/post/list?page=" + currentPage;
+        String url = GlobalVariables.getAPI_URL()+"/post/list?page=" + currentPage;
         String token = UserManager.getInstance().getToken();
 
         Request request = new Request.Builder()
@@ -132,7 +133,7 @@ public class PostService {
     public List<Post> getAllPostsByUserId(int currentPage) {
         List<Post> postList = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.68.110:8080/post/list/"+UserManager.getInstance().getUser().getId()+"?page="+currentPage;
+        String url = GlobalVariables.getAPI_URL()+"/post/list/"+UserManager.getInstance().getUser().getId()+"?page="+currentPage;
         String token = UserManager.getInstance().getToken();
 
         Request request = new Request.Builder()

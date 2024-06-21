@@ -17,6 +17,11 @@ public class UserManager {
         return instance;
     }
 
+    public void logout(){
+        user = null;
+        token = null;
+    }
+
     public User getUser() {
         return user;
     }

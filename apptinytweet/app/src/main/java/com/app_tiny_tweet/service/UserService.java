@@ -1,7 +1,11 @@
 package com.app_tiny_tweet.service;
 
+import android.widget.Toast;
+
+import com.app_tiny_tweet.activities.SignUpActivity;
 import com.app_tiny_tweet.model.Post;
 import com.app_tiny_tweet.model.User;
+import com.app_tiny_tweet.security.GlobalVariables;
 import com.app_tiny_tweet.security.UserManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,6 +19,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserService {
 
@@ -31,7 +37,7 @@ public class UserService {
         return instance;
     }
 
-    public boolean login(UserManager user) {
+    public boolean login(UserManager user)  {
         final boolean[] result = {false};
 
         Thread saveThread = new Thread(() -> {
@@ -41,7 +47,7 @@ public class UserService {
 
                 RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
                 Request request = new Request.Builder()
-                        .url("http://192.168.68.110:8080/auth/login")
+                        .url(GlobalVariables.getAPI_URL()+"/auth/login")
                         .post(body)
                         .build();
 
@@ -78,39 +84,49 @@ public class UserService {
         return result[0];
     }
 
-    public void save(User user) {
+    public void save(User user) throws RuntimeException {
+        OkHttpClient client = new OkHttpClient();
 
-        Thread t = new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
+        String json = buildJson(user);
 
-                String json = buildJson(user);
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(GlobalVariables.getAPI_URL()+"/user/save")
+                .post(body)
+                .build();
 
-                RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
-                Request request = new Request.Builder()
-                        .url("http://192.168.68.110:8080/user/save")
-                        .post(body)
-                        .build();
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Exception> exceptionReference = new AtomicReference<>();
 
-                Response response = client.newCall(request).execute();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                exceptionReference.set(e);
+                latch.countDown();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    throw new IOException("Unexpected code " + response);
+                    exceptionReference.set(new RuntimeException("Error on save user: " + response));
                 }
                 response.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                latch.countDown();
             }
         });
 
-        t.start();
-
         try {
-            t.join();
+            latch.await();
         } catch (InterruptedException e) {
-            System.out.println("A thread foi interrompida.");
-            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+
+        Exception exception = exceptionReference.get();
+        if (exception != null) {
+            throw new RuntimeException(exception);
         }
     }
+
 
     public String buildJson(User user) {
         if (user.getId() != null) {
