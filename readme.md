@@ -4,10 +4,13 @@
  - Uma plataforma onde usuários pode criar uma conta, publicar e ver textos.
 
 ## Funcionalidades
- - Criar conta
- - Login
+ - Criar conta (Username e Password)
+ - Login (Username e Password)
  - Criar postagem (titulo e conteúdo)
- - Ver feed (todas as publições de todos os usuários)
+ - Ver feed geral (todas as publições de todos os usuários)
+ - Ver feed do usuário (publições somente do usuários)
+ - Alterar a senha do usuário em Profile
+ - Logout do app em Profile 
 
 ## Como rodar
 ### API Spring boot
