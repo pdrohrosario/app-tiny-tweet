@@ -24,8 +24,8 @@ public class UserService
 	private final UserMapper userMapper;
 
 	public User saveUser(UserRecord userRecord){
-		UserDetails userExists = userRepository.findByUsername(userRecord.username());
-		if(Objects.nonNull(userExists))
+		User userExists = userRepository.findFirstByUsername(userRecord.username());
+		if(Objects.nonNull(userExists) && !Objects.equals(userRecord.id(), userExists.getId()))
 			throw new InvalidParameterException("User already exists");
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
