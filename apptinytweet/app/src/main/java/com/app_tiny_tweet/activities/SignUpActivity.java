@@ -71,7 +71,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean validateFields(String username, String password, String confirmPassword) {
         if(username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
-            Toast.makeText(SignUpActivity.this, "Fill out the fields!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, "Username and Password are required fields !", Toast.LENGTH_SHORT).show();
             return false;
         }
 

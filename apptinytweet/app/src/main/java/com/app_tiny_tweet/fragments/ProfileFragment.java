@@ -67,8 +67,6 @@ public class ProfileFragment extends Fragment {
 
             if (updatedUsername.isEmpty() || updatedPassword.isEmpty()) {
                 Toast.makeText(getActivity(), "Username and Password must not be empty", Toast.LENGTH_SHORT).show();
-            } else if (UserManager.getInstance().getUser().getUsername().equals(updatedUsername)) {
-                Toast.makeText(getActivity(), "The new username must be different from the current", Toast.LENGTH_SHORT).show();
             } else {
                UserManager.getInstance().getUser().setUsername(updatedUsername);
                UserManager.getInstance().getUser().setPassword(updatedPassword);
