@@ -9,18 +9,17 @@
         android:id="@+id/etPostTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Título do Post" />
+        android:hint="Title" />
 
     <EditText
         android:id="@+id/etPostContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Conteúdo do Post" />
+        android:hint="Content" />
 
     <Button
         android:id="@+id/btnSubmitPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Adicionar Post" />
-
+        android:text="Add post"/>
 </LinearLayout>
