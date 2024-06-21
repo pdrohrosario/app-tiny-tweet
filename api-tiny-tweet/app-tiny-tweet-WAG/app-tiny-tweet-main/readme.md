@@ -15,5 +15,4 @@
 
 ### App
  - O app depende da API
- - No android studio, abra a pasta /apptinytweet e localize a classe GlobalVariables e edit o IP ->  192.168.68.110 para o respectivo de sua máquina.
- - Execute o projeto.
+ - No android studio, abra a pasta /apptinytweet e execute o projeto.
