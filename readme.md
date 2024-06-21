@@ -9,7 +9,7 @@
  - Criar postagem (titulo e conteúdo)
  - Ver feed geral (todas as publições de todos os usuários)
  - Ver feed do usuário (publições somente do usuários)
- - Alterar a senha do usuário (publições somente do usuários)
+ - Alterar a senha do usuário em Profile
  - Logout do app em Profile 
 
 ## Como rodar
