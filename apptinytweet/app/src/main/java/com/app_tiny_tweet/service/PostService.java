@@ -47,7 +47,7 @@ public class PostService {
 
                 RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
                 Request request = new Request.Builder()
-                        .url("http://192.168.68.110:8080/post/save")
+                        .url(GlobalVariables.getAPI_URL()+"/post/save")
                         .post(body)
                         .addHeader("Authorization", "Bearer " + user.getToken())
                         .build();
